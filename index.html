@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Elite Home Inspections | Certified Property Authority</title>
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@700&family=Montserrat:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <style>
+        :root {
+            --primary: #1e272e;    /* Deep Slate/Stone */
+            --accent: #f39c12;     /* Safety Amber/Construction Orange */
+            --light: #f1f2f6;      /* Concrete/Pavement */
+            --text: #2f3542;       /* Dark Iron */
+            --white: #ffffff;
+            --blueprint: #2c3e50;
+        }
+
+        /* --- ANTI-SLIDE & RESET --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; scroll-behavior: smooth; }
+
+        html, body { 
+            font-family: 'Montserrat', sans-serif; 
+            line-height: 1.6; 
+            color: var(--text); 
+            width: 100%;
+            max-width: 100%;
+            overflow-x: hidden; 
+            position: relative;
+            background-color: var(--white);
+        }
+
+        h1, h2, h3, .logo { font-family: 'Libre Baskerville', serif; }
+
+        img, iframe, video { max-width: 100% !important; height: auto; }
+        
+        /* Navigation - Bold & Professional */
+        nav { 
+            background: var(--white); 
+            padding: 1.2rem 5%; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            position: sticky; 
+            top: 0; 
+            z-index: 1000; 
+            box-shadow: 0 4px 0 var(--accent); /* Thick safety-color border instead of light shadow */
+            flex-wrap: wrap;
+        }
+        .logo { font-weight: 700; font-size: 1.4rem; color: var(--primary); letter-spacing: -1px; }
+        .logo span { color: var(--accent); }
+        .nav-links { list-style: none; display: flex; gap: 25px; }
+        .nav-links a { text-decoration: none; color: var(--primary); font-weight: 700; transition: 0.3s; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; }
+        .nav-links a:hover { color: var(--accent); }
+
+        /* Sections */
+        section { padding: 100px 10%; position: relative; }
+
+        /* Hero - Darker, High-Accountability Feel */
+        .hero { 
+            background: linear-gradient(rgba(30, 39, 46, 0.85), rgba(30, 39, 46, 0.85)), url('https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=1350&q=80'); 
+            background-size: cover; 
+            background-position: center; 
+            color: white; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+            align-items: center; 
+            text-align: center; 
+            min-height: 85vh;
+            padding: 20px;
+            border-bottom: 10px solid var(--primary);
+        }
+        
+        .hero h1 { font-size: 3.8rem; margin-bottom: 1.5rem; line-height: 1.1; }
+        
+        .trust-bar { background: var(--light); padding: 25px; display: flex; justify-content: center; gap: 40px; flex-wrap: wrap; align-items: center; border-bottom: 1px solid #ddd; }
+        .trust-badge { font-weight: 900; color: var(--primary); border: 2px solid var(--primary); padding: 6px 18px; border-radius: 0; /* Square for structural feel */ text-transform: uppercase; font-size: 0.75rem; letter-spacing: 1px; }
+
+        /* Cards - Modern "Report" Style */
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px; margin-top: 50px; }
+        .card { 
+            background: var(--white); 
+            padding: 40px; 
+            border-radius: 0; 
+            transition: 0.3s; 
+            border: 1px solid #eee;
+            border-left: 8px solid var(--primary); /* "Folder" or "Report" look */
+            position: relative; 
+        }
+        .card:hover { transform: scale(1.02); box-shadow: 15px 15px 0 var(--light); border-left-color: var(--accent); }
+        .card h3 { margin-bottom: 15px; color: var(--primary); }
+
+        /* Sample Report CTA - Visual Authority */
+        .report-cta { 
+            background: var(--primary); 
+            color: white; 
+            padding: 60px; 
+            border-radius: 0; 
+            text-align: center; 
+            margin-top: 60px;
+            border: 2px dashed var(--accent);
+        }
+        .btn { 
+            display: inline-block; 
+            background: var(--accent); 
+            color: var(--primary); 
+            padding: 15px 35px; 
+            text-decoration: none; 
+            border-radius: 0; 
+            font-weight: 900; 
+            text-transform: uppercase;
+            margin-top: 15px; 
+            transition: 0.3s; 
+            border: none; 
+            letter-spacing: 1px;
+        }
+        .btn:hover { background: var(--white); color: var(--primary); transform: translateY(-3px); }
+
+        /* Testimonials - Simplified & Clean */
+        .testimonial-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; }
+        .review-card { border: 1px solid #ddd; padding: 25px; background: #fff; border-radius: 0; }
+        .stars { color: var(--accent); margin-bottom: 12px; font-size: 1.2rem; }
+
+        /* FAQ */
+        .faq { max-width: 800px; margin: 40px auto; }
+        details { background: var(--white); padding: 18px; margin-bottom: 12px; border: 1px solid #ddd; cursor: pointer; }
+        summary { font-weight: 700; list-style: none; display: flex; justify-content: space-between; color: var(--primary); }
+        summary::after { content: '↓'; font-weight: bold; color: var(--accent); }
+
+        /* Forms - Precision Look */
+        form { display: flex; flex-direction: column; max-width: 650px; margin: auto; width: 100%; }
+        input, textarea { 
+            margin-bottom: 20px; 
+            padding: 15px; 
+            border: 2px solid var(--light); 
+            border-radius: 0; 
+            font-family: 'Montserrat', sans-serif; 
+            font-size: 1rem;
+            background: #fafafa;
+        }
+        input:focus, textarea:focus { border-color: var(--accent); outline: none; background: white; }
+        .map-container { width: 100%; height: 450px; margin-top: 50px; border-radius: 0; overflow: hidden; border: 10px solid var(--light); }
+
+        /* Safety-Call Floating Button */
+        .mobile-call {
+            display: none; position: fixed; bottom: 0; width: 100%; background: var(--accent); color: var(--primary);
+            text-align: center; padding: 15px 0; font-weight: bold; text-decoration: none; z-index: 9999; 
+            line-height: 1.2; border-top: 2px solid var(--primary);
+        }
+        .mobile-call .call-text { display: block; font-size: 0.7rem; text-transform: uppercase; font-weight: 900; }
+        .mobile-call .call-number { display: block; font-size: 1.4rem; font-weight: 900; }
+
+        /* Footer */
+        footer { background: var(--primary); color: #a4b0be; text-align: center; padding: 60px 5%; font-size: 14px; border-top: 5px solid var(--accent); }
+        footer a { color: var(--white); text-decoration: underline; font-weight: bold; }
+
+        @media (max-width: 768px) {
+            nav { padding: 1rem 5%; }
+            .logo { width: 100%; text-align: center; margin-bottom: 10px; font-size: 1.2rem; }
+            .nav-links { gap: 12px; width: 100%; justify-content: center; }
+            .nav-links a { font-size: 0.75rem; }
+            .hero h1 { font-size: 2.5rem; }
+            .mobile-call { display: block; }
+            body { padding-bottom: 80px; } 
+            section { padding: 60px 8%; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="logo">ELITE<span>INSPECT</span></div>
+        <ul class="nav-links">
+            <li><a href="#home">Main</a></li>
+            <li><a href="#services">Inspections</a></li>
+            <li><a href="#about">Reviews</a></li>
+            <li><a href="#contact">Schedule</a></li>
+        </ul>
+    </nav>
+
+    <header id="home" class="hero">
+        <h1 data-aos="fade-up">Structural Integrity.<br>Zero Surprises.</h1>
+        <p data-aos="fade-up" data-aos-delay="200">The most thorough property audits in the industry. Reports delivered within 24 hours.</p>
+        <div data-aos="zoom-in" data-aos-delay="400">
+            <a href="#contact" class="btn">Book Your Inspection</a>
+            <a href="#" class="btn" style="background: transparent; border: 2px solid var(--accent); color: var(--accent); margin-left: 10px;">View Report Sample</a>
+        </div>
+    </header>
+
+    <div class="trust-bar">
+        <span class="trust-badge">InterNACHI CERTIFIED</span>
+        <span class="trust-badge">NY State Licensed</span>
+        <span class="trust-badge">Fully Insured</span>
+        <span class="trust-badge">Commercial & Residential</span>
+    </div>
+
+    <section id="services">
+        <h2 style="text-align:center; font-size: 2.8rem; margin-bottom: 10px;">Inspection Services</h2>
+        <p style="text-align: center; color: #777; font-weight: 700; text-transform: uppercase; letter-spacing: 2px;">Protecting Your Investment</p>
+        <div class="grid">
+            <div class="card" data-aos="fade-up">
+                <h3>Residential Audit</h3>
+                <p>A full forensic analysis of the property: Foundation, HVAC, Electrical, Plumbing, and Roof systems.</p>
+            </div>
+            <div class="card" data-aos="fade-up" data-aos-delay="100">
+                <h3>Commercial PCA</h3>
+                <p>Property Condition Assessments for investors. Detailed capital reserve table and risk analysis included.</p>
+            </div>
+            <div class="card" data-aos="fade-up" data-aos-delay="200">
+                <h3>Environmental</h3>
+                <p>Certified testing for Mold, Radon, and Wood-Destroying Organisms (Termites). Ensure a healthy interior.</p>
+            </div>
+        </div>
+
+        <div class="report-cta" data-aos="zoom-in">
+            <h3>Download Our Sample Field Report</h3>
+            <p>See the level of detail we provide. Every report includes high-def photos and repair estimates.</p>
+            <a href="#" class="btn">Get Sample Report (PDF)</a>
+        </div>
+    </section>
+
+    <section id="about" style="background:var(--light)">
+        <h2 style="text-align:center; margin-bottom: 50px;">Verified Field Results</h2>
+        <div class="testimonial-grid">
+            <div class="review-card" data-aos="fade-up">
+                <div class="stars">★★★★★</div>
+                <p>"The inspector found a major foundation crack hidden by shelving. Saved us over $20k in repairs."</p>
+                <strong style="display:block; margin-top:15px; color:var(--primary);">— Michael R.</strong>
+            </div>
+            <div class="review-card" data-aos="fade-up" data-aos-delay="100">
+                <div class="stars">★★★★★</div>
+                <p>"Most detailed report I've seen. The mobile app makes it easy to share with my realtor."</p>
+                <strong style="display:block; margin-top:15px; color:var(--primary);">— Sarah L.</strong>
+            </div>
+            <div class="review-card" data-aos="fade-up" data-aos-delay="200">
+                <div class="stars">★★★★★</div>
+                <p>"Professional, on-time, and walked us through the main issues before even leaving the site."</p>
+                <strong style="display:block; margin-top:15px; color:var(--primary);">— David P.</strong>
+            </div>
+        </div>
+
+        <div class="faq">
+            <h3 style="margin-bottom:30px; text-align:center; font-size: 2rem;">Common Questions</h3>
+            <details>
+                <summary>How long is the actual site visit?</summary>
+                <p style="padding:15px; background: #fafafa;">Expect 3 to 4 hours of intensive on-site evaluation for a standard single-family home.</p>
+            </details>
+            <details>
+                <summary>When is the final report issued?</summary>
+                <p style="padding:15px; background: #fafafa;">We guarantee delivery of your comprehensive digital report within 24 hours of the site visit completion.</p>
+            </details>
+        </div>
+    </section>
+
+    <section id="contact">
+        <h2 style="text-align:center; font-size: 2.8rem; margin-bottom: 40px;">Request Field Quote</h2>
+        <form action="#" method="POST">
+            <input type="text" name="name" placeholder="Full Client Name" required>
+            <input type="tel" name="phone" placeholder="Direct Contact Number" required>
+            <input type="email" name="email" placeholder="Email for Report Delivery" required>
+            <textarea name="message" rows="5" placeholder="Property Address and Approximate Square Footage" required></textarea>
+            
+            <div class="g-recaptcha" data-sitekey="your-site-key" style="margin-bottom:20px"></div>
+            
+            <button type="submit" class="btn" style="width:100%; cursor:pointer;">Initiate Quote Request</button>
+        </form>
+
+        <div class="map-container">
+            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d193595.15830869428!2d-74.119763973046!3d40.69766374874431!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.3!3m3!1m2!1s0x89c24fa5d33f083b%3A0xc80b8f06e177fe62!2sNew%20York%2C%20NY!5e0!3m2!1sen!2sus!4v1647000000000" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+        </div>
+    </section>
+
+    <a href="tel:5555555555" class="mobile-call">
+        <span class="call-text">FIELD DISPATCH: CALL TO BOOK</span>
+        <span class="call-number">(555) 555-5555</span>
+    </a>
+
+    <footer>
+        <p>© 2026 Elite Home Inspections. All Rights Reserved. NYS License #160000XXXX.</p>
+        <p style="margin-top: 15px;">Professional Web Management by <a href="https://gardif.com">GARDIF.COM</a></p>
+    </footer>
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({ duration: 800, once: true });
+    </script>
+</body>
+</html>
