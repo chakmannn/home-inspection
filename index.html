@@ -30,17 +30,18 @@
 
         img { max-width: 100%; height: auto; display: block; }
 
+        /* --- تحديث تنسيق الهيدر والروابط فقط --- */
         header {
             position: fixed;
             top: 0;
             width: 100%;
             display: flex;
             flex-direction: column;
-            background: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
             z-index: 1000;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            padding: 10px 5%;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            padding: 10px 0; /* تقليل البادينج الجانبي للهيدر للسماح بمساحة أكبر للروابط */
         }
 
         .header-top {
@@ -48,19 +49,25 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 10px;
+            padding: 0 5% 10px 5%;
         }
 
-        .logo { font-size: 22px; font-weight: 900; color: var(--primary-color); text-decoration: none; }
+        .logo { font-size: 20px; font-weight: 900; color: var(--primary-color); text-decoration: none; }
 
-        nav { width: 100%; }
+        nav { 
+            width: 100%; 
+            border-top: 1px solid #f1f5f9; /* خط فاصل بسيط بين اللوجو والروابط في الموبايل */
+            padding-top: 8px;
+        }
+        
         nav ul { 
             display: flex; 
             list-style: none; 
-            gap: 15px; 
-            justify-content: center;
+            gap: 5px; 
+            justify-content: flex-start;
             overflow-x: auto;
-            padding-bottom: 5px;
+            padding: 0 15px 10px 15px;
+            scroll-behavior: smooth;
             -webkit-overflow-scrolling: touch;
         }
         
@@ -71,29 +78,40 @@
             color: var(--text-dark); 
             font-weight: 700; 
             white-space: nowrap;
-            font-size: 0.95rem;
+            font-size: 0.85rem;
+            padding: 8px 12px; /* مساحة لمس مريحة للضغط */
+            background: #f8fafc; /* خلفية بسيطة لتبدو كأزرار في الموبايل */
+            border-radius: 8px;
             transition: 0.3s;
             cursor: pointer;
+            display: inline-block;
         }
-        nav a:hover { color: var(--primary-color); }
+        
+        nav a:hover { 
+            color: white; 
+            background: var(--primary-color);
+        }
 
         .lang-btn { 
             background: var(--text-dark); 
             color: #fff; 
-            padding: 6px 12px; 
+            padding: 6px 15px; 
             border-radius: 20px; 
             cursor: pointer; 
             border: none; 
             font-weight: bold;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
         }
 
         @media (min-width: 769px) {
-            header { flex-direction: row; padding: 15px 5%; }
-            .header-top { width: auto; margin-bottom: 0; }
-            nav { width: auto; margin-right: 20px; }
-            nav ul { gap: 25px; overflow: visible; }
+            header { flex-direction: row; padding: 15px 5%; align-items: center; justify-content: space-between; }
+            .header-top { width: auto; margin-bottom: 0; padding: 0; }
+            nav { width: auto; border-top: none; padding-top: 0; }
+            nav ul { gap: 15px; overflow: visible; padding: 0; }
+            nav a { background: transparent; font-size: 0.95rem; padding: 5px 10px; }
+            nav a:hover { background: transparent; color: var(--primary-color); }
         }
+        /* --- نهاية تحديث الهيدر --- */
 
         .hero {
             min-height: 100vh;
@@ -184,11 +202,11 @@
         </div>
         <nav>
             <ul>
-                <li><a onclick="smoothScroll('#about')" class="trans" data-ar="من نحن" data-en="Who We Are">من نحن</a></li>
+                <li><a onclick="smoothScroll('#about')" class="trans" data-ar="من نحن" data-en="About">من نحن</a></li>
                 <li><a onclick="smoothScroll('#services')" class="trans" data-ar="خدماتنا" data-en="Services">خدماتنا</a></li>
-                <li><a onclick="smoothScroll('#gallery')" class="trans" data-ar="قبل وبعد" data-en="Before & After">قبل وبعد</a></li>
+                <li><a onclick="smoothScroll('#gallery')" class="trans" data-ar="قبل وبعد" data-en="Results">قبل وبعد</a></li>
                 <li><a onclick="smoothScroll('#reviews')" class="trans" data-ar="التقييمات" data-en="Reviews">التقييمات</a></li>
-                <li><a onclick="smoothScroll('#contact')" class="trans" data-ar="اتصل بنا" data-en="Contact Us">اتصل بنا</a></li>
+                <li><a onclick="smoothScroll('#contact')" class="trans" data-ar="اتصل بنا" data-en="Contact">اتصل بنا</a></li>
             </ul>
         </nav>
     </header>
@@ -197,7 +215,6 @@
         <h1 class="trans" data-ar="ابتسامتك تبدأ من هنا" data-en="Your Smile Starts Here">ابتسامتك تبدأ من هنا</h1>
         <p class="trans" data-ar="نقدم لك أحدث تقنيات طب الأسنان لضمان صحة وجمال أسنانك في عام 2026." data-en="Providing the latest dental technologies to ensure your health and beauty in 2026.">نقدم لك أحدث تقنيات طب الأسنان لضمان صحة وجمال أسنانك في عام 2026.</p>
         <div class="hero-buttons">
-            <!-- تحديث: الزر الآن يقوم بالاتصال مباشرة بالرقم المكتوب في الأسفل -->
             <a href="tel:+966501234567" class="btn btn-primary trans" data-ar="احجز موعدك الآن" data-en="Call to Book">احجز موعدك الآن</a>
             <button onclick="smoothScroll('#services')" class="btn btn-secondary trans" data-ar="اكتشف خدماتنا" data-en="See Our Services">اكتشف خدماتنا</button>
         </div>
@@ -282,7 +299,6 @@
 
     <footer id="contact">
         <div class="footer-grid">
-            <!-- تم حذف قسم "عيادة X ورعايتكم هي أولويتنا" من هنا -->
             <div class="footer-col">
                 <h4 class="trans" data-ar="روابط سريعة" data-en="Quick Links">روابط سريعة</h4>
                 <ul class="footer-links">
@@ -311,7 +327,7 @@
         function smoothScroll(target) {
             const element = document.querySelector(target);
             if (!element) return;
-            const headerOffset = 110;
+            const headerOffset = 130; // زيادة الأوفست لتناسب الهيدر الجديد في الموبايل
             const elementPosition = element.getBoundingClientRect().top;
             const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
             window.scrollTo({ top: offsetPosition, behavior: "smooth" });
