@@ -1053,58 +1053,20 @@
     }
 
 async function fetchStatusesFromGoogle() {
-  const calendarIds = fleet.map(car => car.calendarId);
+  const calendarIds = fleet.map(car => car.calendarId).join(",");
 
-  console.log("=== FETCH START ===");
-  console.log("Endpoint:", APPS_SCRIPT_URL);
-  console.log("Calendar IDs:", calendarIds);
+  const url = `${APPS_SCRIPT_URL}?calendarIds=${encodeURIComponent(calendarIds)}`;
+
+  console.log("Fetching via GET:", url);
 
   try {
-    const response = await fetch(APPS_SCRIPT_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ calendarIds })
-    });
+    const response = await fetch(url);
 
-    console.log("Response received:", response);
-    console.log("Status:", response.status);
-    console.log("OK:", response.ok);
-
-    if (!response.ok) {
-      const text = await response.text();
-      console.error("❌ Server returned error:", text);
-      showDebugBox("Server error:\n" + text);
-      return;
-    }
-
-    const text = await response.text();
-    console.log("Raw response text:", text);
-
-    let data;
-    try {
-      data = JSON.parse(text);
-    } catch (err) {
-      console.error("❌ JSON parse failed:", err);
-      showDebugBox("JSON parse error:\n" + text);
-      return;
-    }
-
-    console.log("Parsed JSON:", data);
-
-    if (!data.items || !Array.isArray(data.items)) {
-      console.error("❌ Invalid structure:", data);
-      showDebugBox("Invalid response structure");
-      return;
-    }
+    const data = await response.json();
 
     data.items.forEach(item => {
-      console.log("Processing item:", item);
-
       const car = fleet.find(x => x.calendarId === item.calendarId);
-      if (!car) {
-        console.warn("⚠️ No matching car for calendar:", item.calendarId);
-        return;
-      }
+      if (!car) return;
 
       currentStatuses.set(car.id, {
         type: item.status,
@@ -1113,14 +1075,10 @@ async function fetchStatusesFromGoogle() {
       });
     });
 
-    console.log("Final mapped statuses:", currentStatuses);
-
     renderFleet();
-    console.log("=== FETCH SUCCESS ===");
 
   } catch (error) {
-    console.error("❌ FETCH FAILED:", error);
-    showDebugBox("Fetch failed:\n" + error.message);
+    console.error("Fetch failed:", error);
   }
 }
 
