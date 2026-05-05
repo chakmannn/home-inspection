@@ -816,7 +816,7 @@
     //     { "calendarId":"...", "status":"busy", "label":"Available until 2026-05-08" }
     //   ]
     // }
-    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwfqIvF3B7gK8dYv2rZVs96Lo-w9vPsMrSGXJH_tvK9L0uKZgq6-efd2ZyVZaxRyvqldA/exec";
+    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby-UFr6AHzUeQiMcuhDcH9mjDwQ24vsOal4irXCa3039bHSXYqAa__nKd7ojPvPii5n1Q/exec";
 
     const fleet = [
       {
@@ -1052,12 +1052,35 @@
       `).join("");
     }
 
-const response = await fetch(url);
-const text = await response.text();
+async function fetchStatusesFromGoogle() {
+  const calendarIds = fleet.map(car => car.calendarId).join(",");
 
-console.log("RAW RESPONSE:", text);
+  const url = `${APPS_SCRIPT_URL}?calendarIds=${encodeURIComponent(calendarIds)}`;
 
-const data = JSON.parse(text);
+  console.log("Fetching via GET:", url);
+
+  try {
+    const response = await fetch(url);
+
+    const data = await response.json();
+
+    data.items.forEach(item => {
+      const car = fleet.find(x => x.calendarId === item.calendarId);
+      if (!car) return;
+
+      currentStatuses.set(car.id, {
+        type: item.status,
+        textEn: item.labelEn,
+        textAr: item.labelAr
+      });
+    });
+
+    renderFleet();
+
+  } catch (error) {
+    console.error("Fetch failed:", error);
+  }
+}
 
     function bindFleetFilters() {
       document.getElementById("fleetFilters").addEventListener("click", (e) => {
