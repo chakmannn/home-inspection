@@ -1052,35 +1052,12 @@
       `).join("");
     }
 
-async function fetchStatusesFromGoogle() {
-  const calendarIds = fleet.map(car => car.calendarId).join(",");
+const response = await fetch(url);
+const text = await response.text();
 
-  const url = `${APPS_SCRIPT_URL}?calendarIds=${encodeURIComponent(calendarIds)}`;
+console.log("RAW RESPONSE:", text);
 
-  console.log("Fetching via GET:", url);
-
-  try {
-    const response = await fetch(url);
-
-    const data = await response.json();
-
-    data.items.forEach(item => {
-      const car = fleet.find(x => x.calendarId === item.calendarId);
-      if (!car) return;
-
-      currentStatuses.set(car.id, {
-        type: item.status,
-        textEn: item.labelEn,
-        textAr: item.labelAr
-      });
-    });
-
-    renderFleet();
-
-  } catch (error) {
-    console.error("Fetch failed:", error);
-  }
-}
+const data = JSON.parse(text);
 
     function bindFleetFilters() {
       document.getElementById("fleetFilters").addEventListener("click", (e) => {
