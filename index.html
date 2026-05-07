@@ -331,69 +331,55 @@
     <script>
 
 (function() {
-    // 1. STYLE : On prépare le preloader et les animations douces
-    const style = document.createElement('style');
-    style.innerHTML = `
-        /* Écran de chargement initial */
-        #preloader {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #fff; z-index: 9999; display: flex; align-items: center; justify-content: center;
-            transition: opacity 1s ease;
-        }
-        .preloader-hidden { opacity: 0; pointer-events: none; }
+  // 1. STYLE : On prépare une animation "Cinématographique" (Zoom + Fondu lent)
+  const style = document.createElement('style');
+  style.innerHTML = `
+    .hero-pre-animate { 
+      opacity: 0; 
+      transform: scale(1.1) translateY(20px); /* Zoom léger au départ */
+      transition: opacity 2s ease-in-out, transform 2.5s cubic-bezier(0.1, 1, 0.2, 1);
+      will-change: transform, opacity;
+    }
+    .hero-visible { 
+      opacity: 1 !important; 
+      transform: scale(1) translateY(0) !important; 
+    }
+    /* On cache le Hero immédiatement pour éviter le flash blanc au premier chargement */
+    header, .hero { opacity: 0; }
+  `;
+  document.head.appendChild(style);
 
-        /* Animation des sections (plus lente et fluide) */
-        .js-reveal { 
-            opacity: 0; transform: translate3d(0, 40px, 0); 
-            transition: opacity 1.8s ease, transform 1.5s cubic-bezier(0.1, 1, 0.2, 1);
-            will-change: transform, opacity;
-        }
-        .js-show { opacity: 1 !important; transform: translate3d(0, 0, 0) !important; }
-    `;
-    document.head.appendChild(style);
+  const initHero = () => {
+    const hero = document.querySelector('header, .hero');
+    if (!hero) return;
 
-    // 2. HTML : On ajoute le preloader au body
-    const preloader = document.createElement('div');
-    preloader.id = 'preloader';
-    preloader.innerHTML = '<div style="width:40px;height:40px;border:3px solid #eee;border-top-color:#333;border-radius:50%;animation:s 1s infinite linear"></div>';
-    document.body.prepend(preloader);
-    
-    // Animation rotation du loader
-    const keyframes = document.createElement('style');
-    keyframes.innerHTML = "@keyframes s { to { transform: rotate(360deg); } }";
-    document.head.appendChild(keyframes);
+    // On récupère l'image de fond
+    const bg = window.getComputedStyle(hero).backgroundImage;
+    const url = bg.match(/url\(["']?([^"']+)["']?\)/)?.[1];
 
-    const init = () => {
-        const sections = document.querySelectorAll('section, header, .block');
-        
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('js-show');
-                    observer.unobserve(entry.target);
-                }
-            });
-        }, { threshold: 0.1 });
-
-        sections.forEach(el => {
-            el.classList.add('js-reveal');
-            const rect = el.getBoundingClientRect();
-            // On anime le Hero dès que le preloader s'en va
-            if (rect.top < window.innerHeight) {
-                setTimeout(() => el.classList.add('js-show'), 800); 
-            } else {
-                observer.observe(el);
-            }
-        });
-
-        // On cache le preloader une fois que tout est prêt
-        setTimeout(() => preloader.classList.add('preloader-hidden'), 500);
+    const startAnimation = () => {
+      hero.classList.add('hero-pre-animate');
+      // Petit délai pour s'assurer que le navigateur a bien appliqué l'opacité 0
+      requestAnimationFrame(() => {
+        setTimeout(() => hero.classList.add('hero-visible'), 100);
+      });
     };
 
-    // Lancement propre
-    window.addEventListener('load', init);
-})();
+    if (url) {
+      // FORCE l'attente du chargement de l'image
+      const img = new Image();
+      img.src = url;
+      img.onload = startAnimation; // Ne démarre que quand l'image est prête
+      img.onerror = startAnimation; // Sécurité si l'image bugge
+    } else {
+      startAnimation();
+    }
+  };
 
+  // Lancement dès que possible
+  if (document.readyState === 'complete') initHero();
+  else window.addEventListener('load', initHero);
+})();
 
         
         function smoothScroll(target) {
