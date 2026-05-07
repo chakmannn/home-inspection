@@ -331,90 +331,81 @@
     <script>
 
 /**
- * Ultra-Smooth Professional Reveal & Hero Animation
- * Optimized to prevent "jumpy" first-loads and layout shifts.
+ * Professional Section & Hero Animations
+ * Features: Intersection Observer for performance, subtle hero zoom.
  */
 
 (function() {
-  // 1. IMMEDIATE STYLE INJECTION
-  // We do this outside of any 'load' event so elements are hidden BEFORE they paint.
+  // 1. Inject minimal essential styles via JS
   const style = document.createElement('style');
   style.innerHTML = `
-    /* Prevent the 'flash' of visible content */
     .js-reveal { 
       opacity: 0; 
-      transform: translateY(20px); 
-      transition: opacity 1s cubic-bezier(0.22, 1, 0.36, 1), 
-                  transform 1s cubic-bezier(0.22, 1, 0.36, 1);
-      will-change: opacity, transform;
+      transform: translateY(25px); 
+      transition: opacity 0.8s ease-out, transform 0.8s ease-out; 
     }
     .js-reveal-active { 
-      opacity: 1 !important; 
-      transform: translateY(0) !important; 
+      opacity: 1; 
+      transform: translateY(0); 
     }
     .js-hero-bg { 
-      overflow: hidden;
-      will-change: transform;
-      transition: transform 2.5s cubic-bezier(0.16, 1, 0.3, 1);
-      transform: scale(1.1); /* Pre-zoom for smooth entry */
+      transition: transform 2s cubic-bezier(0.16, 1, 0.3, 1); 
+      transform: scale(1.15); 
     }
-    .js-hero-ready { 
+    .js-hero-bg-ready { 
       transform: scale(1); 
     }
   `;
   document.head.appendChild(style);
 
-  // 2. LOGIC INITIALIZATION
-  const initAnimations = () => {
+  document.addEventListener("DOMContentLoaded", () => {
     
-    // Intersection Observer for Sections
+    // 2. Section Reveal Logic (Intersection Observer)
+    const revealOptions = {
+      threshold: 0.1, // Triggers when 10% of the section is visible
+      rootMargin: "0px 0px -50px 0px" // Triggers slightly before it enters the viewport
+    };
+
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
-          // Add a tiny staggered delay for a more organic feel
-          setTimeout(() => {
-            entry.target.classList.add('js-reveal-active');
-          }, 50);
-          observer.unobserve(entry.target);
+          entry.target.classList.add('js-reveal-active');
+          // Once the animation is done, stop observing to save resources
+          observer.unobserve(entry.target); 
         }
       });
-    }, { threshold: 0.1 });
+    }, revealOptions);
 
-    // Target elements (Standard sections and specific classes)
-    const targets = document.querySelectorAll('section, .animate-reveal');
-    targets.forEach(el => {
-      el.classList.add('js-reveal');
-      observer.observe(el);
+    // Apply to sections (Change the selector '.section' to match your HTML)
+    const animatedSections = document.querySelectorAll('section, .animate-me');
+    animatedSections.forEach(section => {
+      section.classList.add('js-reveal');
+      observer.observe(section);
     });
 
-    // 3. HERO BACKGROUND REFINEMENT
-    const hero = document.querySelector('.hero-background');
-    if (hero) {
-      hero.classList.add('js-hero-bg');
+    // 3. Hero Background "Eye-Caring" Animation
+    // Target your hero image container (e.g., .hero-image)
+    const heroBg = document.querySelector('.hero-background'); 
+    if (heroBg) {
+      heroBg.classList.add('js-hero-bg');
       
-      // Ensure the image is loaded before starting the zoom-out
-      const startHeroAnim = () => {
-        requestAnimationFrame(() => {
-          setTimeout(() => hero.classList.add('js-hero-ready'), 150);
-        });
-      };
-
-      // If it's a background image, we wait for a slight delay; 
-      // if it's an <img>, we check completion.
-      if (hero.complete) {
-        startHeroAnim();
-      } else {
-        window.addEventListener('load', startHeroAnim);
-      }
+      // Use requestAnimationFrame for a jitter-free start
+      requestAnimationFrame(() => {
+        setTimeout(() => {
+          heroBg.classList.add('js-hero-bg-ready');
+        }, 100);
+      });
     }
-  };
 
-  // Run as soon as the DOM is interactive, but before full window load
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initAnimations);
-  } else {
-    initAnimations();
-  }
+    // 4. Subtle Parallax for Background (Optional "Wildcard" Effect)
+    window.addEventListener('scroll', () => {
+      if (heroBg) {
+        const scrollValue = window.scrollY;
+        // Moves the background slightly slower than the scroll for depth
+        heroBg.style.transform = `translateY(${scrollValue * 0.2}px) scale(${1 + scrollValue * 0.0001})`;
+      }
+    });
+  });
 })();
         function smoothScroll(target) {
             const element = document.querySelector(target);
