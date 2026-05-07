@@ -331,18 +331,18 @@
     <script>
 
 (function() {
-  // 1. STYLE : On l'injecte immédiatement pour éviter le "flash"
+  // 1. On masque IMMEDIATEMENT le corps de la page pour éviter le flash au refresh
   const style = document.createElement('style');
   style.textContent = `
-    /* On cache par défaut AVANT le rendu pour éviter la surprise */
-    section, header, .block, .card { 
-      opacity: 0; 
+    /* Masquage initial ultra-rapide */
+    .js-waiting section, .js-waiting header, .js-waiting .block { 
+      opacity: 0 !important; 
     }
     
     .js-animate { 
       opacity: 0;
-      transform: translate3d(0, 40px, 0);
-      transition: opacity 1.2s ease, transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+      transform: translate3d(0, 30px, 0);
+      transition: opacity 1.5s ease, transform 1.2s cubic-bezier(0.2, 1, 0.3, 1);
       will-change: transform, opacity;
     }
 
@@ -352,8 +352,11 @@
     }
   `;
   document.head.appendChild(style);
+  document.documentElement.classList.add('js-waiting');
 
-  const initAnimations = () => {
+  const start = () => {
+    const elements = document.querySelectorAll('section, header, .block');
+    
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
@@ -361,28 +364,30 @@
           observer.unobserve(entry.target);
         }
       });
-    }, { threshold: 0.05 });
+    }, { threshold: 0.1 });
 
-    // 2. APPLICATION : On prépare les éléments
-    document.querySelectorAll('section, header, .block, .card').forEach(el => {
+    elements.forEach(el => {
       el.classList.add('js-animate');
+      // On retire le verrouillage visuel
+      document.documentElement.classList.remove('js-waiting');
       
-      // Si l'élément est déjà visible (Hero), on l'affiche avec un léger fondu
       const rect = el.getBoundingClientRect();
       if (rect.top < window.innerHeight) {
-        // Petit délai pour assurer une transition fluide plutôt qu'un pop
-        setTimeout(() => el.classList.add('js-show'), 50);
+        // Apparition très douce pour le Hero
+        requestAnimationFrame(() => {
+          setTimeout(() => el.classList.add('js-show'), 100);
+        });
       } else {
         observer.observe(el);
       }
     });
   };
 
-  // Lancement dès que le DOM est prêt, sans attendre les images lourdes
-  if (document.readyState === 'interactive' || document.readyState === 'complete') {
-    initAnimations();
+  // Exécution la plus rapide possible
+  if (document.readyState === 'complete') {
+    start();
   } else {
-    document.addEventListener('DOMContentLoaded', initAnimations);
+    window.addEventListener('load', start);
   }
 })();
 
