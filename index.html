@@ -331,14 +331,13 @@
     <script>
 
 (function() {
-  // 1. STYLE OPTIMISÉ : On sépare la préparation de l'animation
+  // 1. STYLE OPTIMISÉ : On ne cache QUE le contenu, pas le fond du Hero
   const style = document.createElement('style');
   style.textContent = `
-    /* On ne cache que si le JS est actif pour éviter de bloquer la page si le script crash */
-    .js-enabled section, .js-enabled header, .js-enabled .block, .js-enabled .card { 
-      opacity: 0; 
-    }
+    /* On cache les sections et blocs, mais on laisse le Hero respirer */
+    section, .block, .card { opacity: 0; }
     
+    /* Animation fluide sans flash blanc */
     .js-animate { 
       opacity: 0;
       transform: translate3d(0, 40px, 0);
@@ -350,9 +349,13 @@
       opacity: 1 !important; 
       transform: translate3d(0, 0, 0) !important;
     }
+
+    /* Fix spécial Hero : on anime l'opacité seulement, pas le fond */
+    header.js-animate, section.hero.js-animate {
+       transform: none; /* Pas de mouvement sur le container pour éviter les sauts */
+    }
   `;
   document.head.appendChild(style);
-  document.documentElement.classList.add('js-enabled');
 
   const initAnimations = () => {
     const observer = new IntersectionObserver((entries) => {
@@ -364,26 +367,25 @@
       });
     }, { threshold: 0.05 });
 
-    // Détection du rafraîchissement pour ajuster la vitesse
-    const isRefresh = performance.navigation.type === 1;
-    const delay = isRefresh ? 10 : 100; // Plus rapide si c'est un refresh
-
-    document.querySelectorAll('section, header, .block, .card').forEach(el => {
+    const targets = document.querySelectorAll('section, header, .block, .card');
+    
+    targets.forEach(el => {
       el.classList.add('js-animate');
       
       const rect = el.getBoundingClientRect();
       if (rect.top < window.innerHeight) {
-        // L'animation du Hero est déclenchée immédiatement avec un micro-délai
-        setTimeout(() => {
-          requestAnimationFrame(() => el.classList.add('js-show'));
-        }, delay);
+        // Pour le Hero au refresh : on déclenche l'affichage ultra-vite
+        // sans attendre les 50ms qui causent le blanc
+        requestAnimationFrame(() => {
+          el.classList.add('js-show');
+        });
       } else {
         observer.observe(el);
       }
     });
   };
 
-  // EXECUTION PRIORITAIRE : On n'attend pas les images lourdes
+  // On lance le script le plus tôt possible
   if (document.readyState === 'interactive' || document.readyState === 'complete') {
     initAnimations();
   } else {
