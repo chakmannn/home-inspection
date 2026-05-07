@@ -331,54 +331,64 @@
     <script>
 
 (function() {
-  // 1. STYLE : On prépare une animation "Cinématographique" (Zoom + Fondu lent)
+  // 1. STYLE OPTIMISÉ : On sépare la préparation de l'animation
   const style = document.createElement('style');
-  style.innerHTML = `
-    .hero-pre-animate { 
+  style.textContent = `
+    /* On ne cache que si le JS est actif pour éviter de bloquer la page si le script crash */
+    .js-enabled section, .js-enabled header, .js-enabled .block, .js-enabled .card { 
       opacity: 0; 
-      transform: scale(1.1) translateY(20px); /* Zoom léger au départ */
-      transition: opacity 2s ease-in-out, transform 2.5s cubic-bezier(0.1, 1, 0.2, 1);
+    }
+    
+    .js-animate { 
+      opacity: 0;
+      transform: translate3d(0, 40px, 0);
+      transition: opacity 1.5s ease, transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
       will-change: transform, opacity;
     }
-    .hero-visible { 
+
+    .js-show { 
       opacity: 1 !important; 
-      transform: scale(1) translateY(0) !important; 
+      transform: translate3d(0, 0, 0) !important;
     }
-    /* On cache le Hero immédiatement pour éviter le flash blanc au premier chargement */
-    header, .hero { opacity: 0; }
   `;
   document.head.appendChild(style);
+  document.documentElement.classList.add('js-enabled');
 
-  const initHero = () => {
-    const hero = document.querySelector('header, .hero');
-    if (!hero) return;
-
-    // On récupère l'image de fond
-    const bg = window.getComputedStyle(hero).backgroundImage;
-    const url = bg.match(/url\(["']?([^"']+)["']?\)/)?.[1];
-
-    const startAnimation = () => {
-      hero.classList.add('hero-pre-animate');
-      // Petit délai pour s'assurer que le navigateur a bien appliqué l'opacité 0
-      requestAnimationFrame(() => {
-        setTimeout(() => hero.classList.add('hero-visible'), 100);
+  const initAnimations = () => {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('js-show');
+          observer.unobserve(entry.target);
+        }
       });
-    };
+    }, { threshold: 0.05 });
 
-    if (url) {
-      // FORCE l'attente du chargement de l'image
-      const img = new Image();
-      img.src = url;
-      img.onload = startAnimation; // Ne démarre que quand l'image est prête
-      img.onerror = startAnimation; // Sécurité si l'image bugge
-    } else {
-      startAnimation();
-    }
+    // Détection du rafraîchissement pour ajuster la vitesse
+    const isRefresh = performance.navigation.type === 1;
+    const delay = isRefresh ? 10 : 100; // Plus rapide si c'est un refresh
+
+    document.querySelectorAll('section, header, .block, .card').forEach(el => {
+      el.classList.add('js-animate');
+      
+      const rect = el.getBoundingClientRect();
+      if (rect.top < window.innerHeight) {
+        // L'animation du Hero est déclenchée immédiatement avec un micro-délai
+        setTimeout(() => {
+          requestAnimationFrame(() => el.classList.add('js-show'));
+        }, delay);
+      } else {
+        observer.observe(el);
+      }
+    });
   };
 
-  // Lancement dès que possible
-  if (document.readyState === 'complete') initHero();
-  else window.addEventListener('load', initHero);
+  // EXECUTION PRIORITAIRE : On n'attend pas les images lourdes
+  if (document.readyState === 'interactive' || document.readyState === 'complete') {
+    initAnimations();
+  } else {
+    document.addEventListener('DOMContentLoaded', initAnimations);
+  }
 })();
 
         
