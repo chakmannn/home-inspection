@@ -330,37 +330,66 @@
 
     <script>
 
-        // 1. Injection du style (net et dynamique)
+// 1. Style ultra-fluide (GPU Accelerated)
 const style = document.createElement('style');
 style.textContent = `
   .js-animate { 
     opacity: 0; 
-    transform: scale(0.85) translateY(80px); /* Zoom + Poussée sans flou */
-    transition: opacity 0.8s ease-out, transform 1s cubic-bezier(0.16, 1, 0.3, 1);
-    will-change: transform, opacity;
+    /* Utilisation de translate3d pour forcer l'accélération matérielle (GPU) */
+    transform: translate3d(0, 60px, 0) scale(0.95);
+    transition: opacity 1s ease-out, transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: transform, opacity; /* Prépare le navigateur à l'animation */
   }
+  
   .js-show { 
     opacity: 1; 
-    transform: scale(1) translateY(0); 
+    transform: translate3d(0, 0, 0) scale(1);
   }
 `;
 document.head.appendChild(style);
 
-// 2. L'observateur de scroll
+// 2. Observateur optimisé pour Mobile & Hero
+const observerOptions = {
+  // Se déclenche un peu avant que l'élément soit visible (marge de 50px)
+  // pour que l'animation paraisse plus naturelle au scroll.
+  rootMargin: '0px 0px -50px 0px',
+  threshold: 0.05 // Déclenchement dès 5% de visibilité
+};
+
 const observer = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
     if (entry.isIntersecting) {
       entry.target.classList.add('js-show');
+      // On arrête d'observer une fois animé pour économiser de la batterie
+      observer.unobserve(entry.target);
     }
   });
-}, { threshold: 0.1 });
+}, observerOptions);
 
-// 3. Application aux éléments
-// Remplacez 'section, .block' par vos sélecteurs réels si nécessaire
-document.querySelectorAll('section, header, .block, .card').forEach(el => {
-  el.classList.add('js-animate');
-  observer.observe(el);
-});
+// 3. Application intelligente
+const startAnimations = () => {
+  const elements = document.querySelectorAll('section, header, .block, .card');
+  
+  elements.forEach((el) => {
+    // Si l'élément est tout en haut (Hero), on l'affiche immédiatement
+    // car l'observateur peut parfois rater le Hero déjà présent au chargement sur mobile.
+    if (el.getBoundingClientRect().top < window.innerHeight) {
+      el.classList.add('js-animate');
+      // Petit délai pour laisser le temps au navigateur de respirer
+      setTimeout(() => el.classList.add('js-show'), 100);
+    } else {
+      el.classList.add('js-animate');
+      observer.observe(el);
+    }
+  });
+};
+
+// Lancement au chargement
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', startAnimations);
+} else {
+  startAnimations();
+}
 
 
         
