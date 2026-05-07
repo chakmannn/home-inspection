@@ -329,36 +329,40 @@
     </a>
 
     <script>
-        // 1. On injecte le style CSS directement via JS pour ne pas toucher au fichier CSS
+        // 1. Injection d'un style plus dynamique
 const style = document.createElement('style');
 style.textContent = `
   .js-animate { 
     opacity: 0; 
-    transform: translateY(30px); 
-    transition: all 0.8s ease-out; 
+    transform: scale(0.8) translateY(100px) rotateX(-20deg);
+    filter: blur(10px);
+    transition: all 1.2s cubic-bezier(0.22, 1, 0.36, 1); /* Mouvement fluide et pro */
+    backface-visibility: hidden;
   }
   .js-show { 
     opacity: 1; 
-    transform: translateY(0); 
+    transform: scale(1) translateY(0) rotateX(0);
+    filter: blur(0);
   }
 `;
 document.head.appendChild(style);
 
-// 2. L'observateur qui détecte le scroll
+// 2. L'observateur
 const observer = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
     if (entry.isIntersecting) {
       entry.target.classList.add('js-show');
     }
   });
-}, { threshold: 0.1 });
+}, { threshold: 0.15 });
 
-// 3. On applique l'animation à TOUTES vos sections et blocs existants
-// Modifiez 'section, .block' par les balises ou classes que vous utilisez
-document.querySelectorAll('section, .block').forEach(el => {
+// 3. Application aux sections (Hero et Blocs)
+// On cible les sections, le header (Hero) et les articles/blocs
+document.querySelectorAll('section, header, .block, .card').forEach(el => {
   el.classList.add('js-animate');
   observer.observe(el);
 });
+
         
         function smoothScroll(target) {
             const element = document.querySelector(target);
