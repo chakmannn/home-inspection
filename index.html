@@ -330,69 +330,83 @@
 
     <script>
 
+/**
+ * Professional Section & Hero Animations
+ * Features: Intersection Observer for performance, subtle hero zoom.
+ */
+
 (function() {
-  // 1. STYLE OPTIMISÉ : On ne cache QUE le contenu, pas le fond du Hero
+  // 1. Inject minimal essential styles via JS
   const style = document.createElement('style');
-  style.textContent = `
-    /* On cache les sections et blocs, mais on laisse le Hero respirer */
-    section, .block, .card { opacity: 0; }
-    
-    /* Animation fluide sans flash blanc */
-    .js-animate { 
-      opacity: 0;
-      transform: translate3d(0, 40px, 0);
-      transition: opacity 1.5s ease, transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
-      will-change: transform, opacity;
+  style.innerHTML = `
+    .js-reveal { 
+      opacity: 0; 
+      transform: translateY(25px); 
+      transition: opacity 0.8s ease-out, transform 0.8s ease-out; 
     }
-
-    .js-show { 
-      opacity: 1 !important; 
-      transform: translate3d(0, 0, 0) !important;
+    .js-reveal-active { 
+      opacity: 1; 
+      transform: translateY(0); 
     }
-
-    /* Fix spécial Hero : on anime l'opacité seulement, pas le fond */
-    header.js-animate, section.hero.js-animate {
-       transform: none; /* Pas de mouvement sur le container pour éviter les sauts */
+    .js-hero-bg { 
+      transition: transform 2s cubic-bezier(0.16, 1, 0.3, 1); 
+      transform: scale(1.15); 
+    }
+    .js-hero-bg-ready { 
+      transform: scale(1); 
     }
   `;
   document.head.appendChild(style);
 
-  const initAnimations = () => {
+  document.addEventListener("DOMContentLoaded", () => {
+    
+    // 2. Section Reveal Logic (Intersection Observer)
+    const revealOptions = {
+      threshold: 0.1, // Triggers when 10% of the section is visible
+      rootMargin: "0px 0px -50px 0px" // Triggers slightly before it enters the viewport
+    };
+
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
-          entry.target.classList.add('js-show');
-          observer.unobserve(entry.target);
+          entry.target.classList.add('js-reveal-active');
+          // Once the animation is done, stop observing to save resources
+          observer.unobserve(entry.target); 
         }
       });
-    }, { threshold: 0.05 });
+    }, revealOptions);
 
-    const targets = document.querySelectorAll('section, header, .block, .card');
-    
-    targets.forEach(el => {
-      el.classList.add('js-animate');
+    // Apply to sections (Change the selector '.section' to match your HTML)
+    const animatedSections = document.querySelectorAll('section, .animate-me');
+    animatedSections.forEach(section => {
+      section.classList.add('js-reveal');
+      observer.observe(section);
+    });
+
+    // 3. Hero Background "Eye-Caring" Animation
+    // Target your hero image container (e.g., .hero-image)
+    const heroBg = document.querySelector('.hero-background'); 
+    if (heroBg) {
+      heroBg.classList.add('js-hero-bg');
       
-      const rect = el.getBoundingClientRect();
-      if (rect.top < window.innerHeight) {
-        // Pour le Hero au refresh : on déclenche l'affichage ultra-vite
-        // sans attendre les 50ms qui causent le blanc
-        requestAnimationFrame(() => {
-          el.classList.add('js-show');
-        });
-      } else {
-        observer.observe(el);
+      // Use requestAnimationFrame for a jitter-free start
+      requestAnimationFrame(() => {
+        setTimeout(() => {
+          heroBg.classList.add('js-hero-bg-ready');
+        }, 100);
+      });
+    }
+
+    // 4. Subtle Parallax for Background (Optional "Wildcard" Effect)
+    window.addEventListener('scroll', () => {
+      if (heroBg) {
+        const scrollValue = window.scrollY;
+        // Moves the background slightly slower than the scroll for depth
+        heroBg.style.transform = `translateY(${scrollValue * 0.2}px) scale(${1 + scrollValue * 0.0001})`;
       }
     });
-  };
-
-  // On lance le script le plus tôt possible
-  if (document.readyState === 'interactive' || document.readyState === 'complete') {
-    initAnimations();
-  } else {
-    document.addEventListener('DOMContentLoaded', initAnimations);
-  }
+  });
 })();
-
         
         function smoothScroll(target) {
             const element = document.querySelector(target);
