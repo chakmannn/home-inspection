@@ -330,66 +330,61 @@
 
     <script>
 
-// 1. Style ultra-fluide (GPU Accelerated)
-const style = document.createElement('style');
-style.textContent = `
-  .js-animate { 
-    opacity: 0; 
-    /* Utilisation de translate3d pour forcer l'accélération matérielle (GPU) */
-    transform: translate3d(0, 60px, 0) scale(0.95);
-    transition: opacity 1s ease-out, transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
-    will-change: transform, opacity; /* Prépare le navigateur à l'animation */
-  }
-  
-  .js-show { 
-    opacity: 1; 
-    transform: translate3d(0, 0, 0) scale(1);
-  }
-`;
-document.head.appendChild(style);
-
-// 2. Observateur optimisé pour Mobile & Hero
-const observerOptions = {
-  // Se déclenche un peu avant que l'élément soit visible (marge de 50px)
-  // pour que l'animation paraisse plus naturelle au scroll.
-  rootMargin: '0px 0px -50px 0px',
-  threshold: 0.05 // Déclenchement dès 5% de visibilité
-};
-
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      entry.target.classList.add('js-show');
-      // On arrête d'observer une fois animé pour économiser de la batterie
-      observer.unobserve(entry.target);
+(function() {
+  // 1. STYLE : On l'injecte immédiatement pour éviter le "flash"
+  const style = document.createElement('style');
+  style.textContent = `
+    /* On cache par défaut AVANT le rendu pour éviter la surprise */
+    section, header, .block, .card { 
+      opacity: 0; 
     }
-  });
-}, observerOptions);
-
-// 3. Application intelligente
-const startAnimations = () => {
-  const elements = document.querySelectorAll('section, header, .block, .card');
-  
-  elements.forEach((el) => {
-    // Si l'élément est tout en haut (Hero), on l'affiche immédiatement
-    // car l'observateur peut parfois rater le Hero déjà présent au chargement sur mobile.
-    if (el.getBoundingClientRect().top < window.innerHeight) {
-      el.classList.add('js-animate');
-      // Petit délai pour laisser le temps au navigateur de respirer
-      setTimeout(() => el.classList.add('js-show'), 100);
-    } else {
-      el.classList.add('js-animate');
-      observer.observe(el);
+    
+    .js-animate { 
+      opacity: 0;
+      transform: translate3d(0, 40px, 0);
+      transition: opacity 1.2s ease, transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+      will-change: transform, opacity;
     }
-  });
-};
 
-// Lancement au chargement
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', startAnimations);
-} else {
-  startAnimations();
-}
+    .js-show { 
+      opacity: 1 !important; 
+      transform: translate3d(0, 0, 0) !important;
+    }
+  `;
+  document.head.appendChild(style);
+
+  const initAnimations = () => {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('js-show');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.05 });
+
+    // 2. APPLICATION : On prépare les éléments
+    document.querySelectorAll('section, header, .block, .card').forEach(el => {
+      el.classList.add('js-animate');
+      
+      // Si l'élément est déjà visible (Hero), on l'affiche avec un léger fondu
+      const rect = el.getBoundingClientRect();
+      if (rect.top < window.innerHeight) {
+        // Petit délai pour assurer une transition fluide plutôt qu'un pop
+        setTimeout(() => el.classList.add('js-show'), 50);
+      } else {
+        observer.observe(el);
+      }
+    });
+  };
+
+  // Lancement dès que le DOM est prêt, sans attendre les images lourdes
+  if (document.readyState === 'interactive' || document.readyState === 'complete') {
+    initAnimations();
+  } else {
+    document.addEventListener('DOMContentLoaded', initAnimations);
+  }
+})();
 
 
         
