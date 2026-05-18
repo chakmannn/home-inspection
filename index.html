@@ -3,306 +3,79 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SpousalAbuseLawyer.com — For Sale</title>
+  <title>SpousalAbuseLawyer.com</title>
   <style>
-    :root{
-      --bg:#0f172a;
-      --panel:#111827;
-      --card:#1f2937;
-      --text:#e5e7eb;
-      --muted:#9ca3af;
-      --accent:#60a5fa;
-      --accent2:#a78bfa;
-      --line:rgba(255,255,255,.10);
-      --shadow:0 20px 60px rgba(0,0,0,.35);
-      --radius:22px;
-      --max:1100px;
-    }
-
-    *{box-sizing:border-box}
-    html,body{margin:0;padding:0}
     body{
-      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      background:
-        radial-gradient(circle at top left, rgba(96,165,250,.18), transparent 30%),
-        radial-gradient(circle at top right, rgba(167,139,250,.15), transparent 28%),
-        linear-gradient(180deg, #0b1220 0%, #0f172a 100%);
-      color:var(--text);
-      line-height:1.5;
+      margin:0;
+      padding:40px 20px;
+      font-family: Arial, sans-serif;
+      background:#0f172a;
+      color:#e5e7eb;
+      line-height:1.6;
     }
-
-    a{color:inherit;text-decoration:none}
-
-    .wrap{
-      width:min(var(--max), calc(100% - 32px));
+    .container{
+      max-width:800px;
       margin:0 auto;
-      padding:28px 0 50px;
     }
-
-    .topbar{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:16px;
-      margin-bottom:28px;
-    }
-
-    .brand{
-      font-weight:700;
-      letter-spacing:.2px;
-      color:#fff;
-    }
-
-    .badge{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      padding:10px 14px;
-      border:1px solid var(--line);
-      border-radius:999px;
-      background:rgba(255,255,255,.04);
-      color:var(--muted);
-      font-size:14px;
-      backdrop-filter: blur(10px);
-    }
-
-    .hero{
-      display:grid;
-      grid-template-columns:1.2fr .8fr;
-      gap:22px;
-      align-items:stretch;
-    }
-
-    .panel{
-      border:1px solid var(--line);
-      background:rgba(17,24,39,.78);
-      backdrop-filter: blur(14px);
-      box-shadow:var(--shadow);
-      border-radius:var(--radius);
-    }
-
-    .hero-main{
-      padding:42px;
-    }
-
     h1{
-      margin:0 0 12px;
-      font-size: clamp(36px, 6vw, 64px);
-      line-height:1.02;
-      letter-spacing:-.04em;
-      color:#fff;
-    }
-
-    .subhead{
-      margin:0 0 24px;
-      font-size: clamp(18px, 2vw, 22px);
-      color:var(--muted);
-      max-width: 60ch;
-    }
-
-    .cta-row{
-      display:flex;
-      flex-wrap:wrap;
-      gap:12px;
-      margin-top:28px;
-    }
-
-    .btn{
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      min-height:48px;
-      padding:0 18px;
-      border-radius:14px;
-      border:1px solid transparent;
-      font-weight:600;
-      transition:transform .15s ease, opacity .15s ease, background .15s ease, border-color .15s ease;
-    }
-
-    .btn:hover{transform:translateY(-1px)}
-    .btn-primary{
-      background:linear-gradient(135deg, var(--accent), var(--accent2));
-      color:#08111f;
-    }
-    .btn-secondary{
-      background:transparent;
-      border-color:var(--line);
-      color:var(--text);
-    }
-
-    .hero-side{
-      padding:26px;
-      display:flex;
-      flex-direction:column;
-      gap:16px;
-    }
-
-    .info-card{
-      padding:18px;
-      border:1px solid var(--line);
-      border-radius:18px;
-      background:rgba(255,255,255,.03);
-    }
-
-    .info-label{
-      font-size:13px;
-      text-transform:uppercase;
-      letter-spacing:.12em;
-      color:#cbd5e1;
-      margin-bottom:6px;
-    }
-
-    .info-value{
-      font-size:16px;
-      color:#fff;
-    }
-
-    .section{
-      margin-top:22px;
-      padding:28px 30px;
-    }
-
-    .section h2{
-      margin:0 0 14px;
-      font-size:22px;
-      color:#fff;
-    }
-
-    .section p, .section li{
-      color:var(--muted);
-      font-size:16px;
-    }
-
-    .grid{
-      display:grid;
-      grid-template-columns:repeat(3, 1fr);
-      gap:16px;
-      margin-top:18px;
-    }
-
-    .step{
-      padding:18px;
-      border-radius:18px;
-      border:1px solid var(--line);
-      background:rgba(255,255,255,.03);
-    }
-
-    .step-num{
-      display:inline-flex;
-      width:32px;
-      height:32px;
-      align-items:center;
-      justify-content:center;
-      border-radius:999px;
-      background:rgba(96,165,250,.16);
-      color:#dbeafe;
-      font-weight:700;
+      font-size:36px;
       margin-bottom:10px;
+      color:#ffffff;
     }
-
-    ol, ul{
-      margin: 12px 0 0 20px;
-      padding:0;
+    h2{
+      font-size:20px;
+      margin-top:30px;
+      color:#ffffff;
     }
-
-    .note{
-      margin-top:18px;
-      padding:16px 18px;
-      border-left:4px solid var(--accent);
-      background:rgba(96,165,250,.08);
-      border-radius:12px;
-      color:#dbeafe;
+    p{
+      margin:12px 0;
+      color:#cbd5e1;
     }
-
-    .footer{
-      text-align:center;
-      margin-top:18px;
-      color:#94a3b8;
-      font-size:14px;
+    ul{
+      margin:10px 0 10px 20px;
+      color:#cbd5e1;
     }
-
-    @media (max-width: 900px){
-      .hero{grid-template-columns:1fr}
-      .grid{grid-template-columns:1fr}
-      .hero-main{padding:28px}
+    .block{
+      margin-top:25px;
+      padding-top:15px;
+      border-top:1px solid #334155;
     }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <div class="topbar">
-      <div class="brand">SpousalAbuseLawyer.com</div>
-      <div class="badge">Domain for sale</div>
-    </div>
+  <div class="container">
 
-    <section class="hero">
-      <div class="panel hero-main">
-        <h1>SpousalAbuseLawyer.com</h1>
-        <p class="subhead">This domain is up for sale.</p>
+    <h1>SpousalAbuseLawyer.com</h1>
 
-        <p>
-          <strong>SpousalAbuseLawyer.com</strong> is currently listed for sale on Dynadot Marketplace.
-          Dynadot is an ICANN-accredited registrar that has been operating since 2002 and manages millions of domains.
-          It has built a solid reputation in the domain community, with many users sharing positive feedback about its reliability and transfer process.
-        </p>
+    <p><strong>This domain is up for sale.</strong></p>
 
-        <p>
-          We never ask for your personal information. Payment is securely processed through Dynadot.
-        </p>
+    <p>
+      SpousalAbuseLawyer.com is currently registered at Dynadot and listed for sale on their marketplace.
+      Dynadot is an ICANN-accredited registrar that has been operating since 2002 and manages millions of domains.
+      It has built a solid reputation in the domain community. Many users on Reddit and other review platforms
+      report positive experiences with its reliability and transfer process.
+    </p>
 
-        <div class="cta-row">
-          <a class="btn btn-primary" href="YOUR_DYNADOT_LISTING_URL" target="_blank" rel="noopener noreferrer">
-            Buy on Dynadot
-          </a>
-          <a class="btn btn-secondary" href="#how-to-buy">How to Purchase</a>
-        </div>
-      </div>
+    <p>
+      We never ask for your personal information. Payment is securely processed through Dynadot.
+    </p>
 
-      <aside class="panel hero-side">
-        <div class="info-card">
-          <div class="info-label">Domain</div>
-          <div class="info-value">SpousalAbuseLawyer.com</div>
-        </div>
-        <div class="info-card">
-          <div class="info-label">Marketplace</div>
-          <div class="info-value">Dynadot</div>
-        </div>
-        <div class="info-card">
-          <div class="info-label">Checkout</div>
-          <div class="info-value">Secure payment via Dynadot</div>
-        </div>
-        <div class="info-card">
-          <div class="info-label">Transfer</div>
-          <div class="info-value">Ownership transfer after purchase</div>
-        </div>
-      </aside>
-    </section>
-
-    <section id="how-to-buy" class="panel section">
+    <div class="block">
       <h2>How to purchase the domain</h2>
-      <div class="grid">
-        <div class="step">
-          <div class="step-num">1</div>
-          <p>Head to Dynadot’s official site and sign up for an account.</p>
-        </div>
-        <div class="step">
-          <div class="step-num">2</div>
-          <p>Use the search bar to find <strong>SpousalAbuseLawyer.com</strong>.</p>
-        </div>
-        <div class="step">
-          <div class="step-num">3</div>
-          <p>Add it to your cart and proceed with payment like any other online purchase.</p>
-        </div>
-      </div>
-
-      <div class="note">
-        After that, ownership of the domain will be transferred to you in less than 24 hours, and the payout will be processed to me.
-      </div>
-    </section>
-
-    <div class="footer">
-      Simple, secure, and ready for transfer.
+      <ul>
+        <li>Head to Dynadot’s official site and create an account</li>
+        <li>Use the search bar to find SpousalAbuseLawyer.com</li>
+        <li>Add it to your cart and complete payment like any standard online purchase</li>
+      </ul>
     </div>
+
+    <div class="block">
+      <p>
+        After purchase, ownership of the domain will be transferred to you in less than 24 hours,
+        and the payout will be processed accordingly.
+      </p>
+    </div>
+
   </div>
 </body>
 </html>
