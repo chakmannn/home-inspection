@@ -358,64 +358,79 @@
     </script>
     
     <script>
-```javascript
-document.addEventListener("DOMContentLoaded", () => {
-  
-  // 1. Eye-Caring Hero Background Animation (Subtle Ken Burns Effect)
-  // Target your background image element (e.g., class="hero-bg")
-  const heroBackground = document.querySelector('.hero-bg');
-  
-  if (heroBackground) {
-    // Hardware acceleration and ultra-slow easing to prevent visual fatigue
-    heroBackground.style.willChange = 'transform';
-    heroBackground.style.transition = 'transform 18s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
-    heroBackground.style.transform = 'scale(1)';
+<script>
+window.addEventListener("load", () => {
+  // 1. DYNAMIC CSS INJECTION
+  // Creates the eye-caring animations automatically without needing a CSS file
+  const style = document.createElement('style');
+  style.innerHTML = `
+    /* Gentle Scroll Fade for Sections */
+    .smart-fade {
+      opacity: 0 !important;
+      transform: translateY(25px) !important;
+      transition: opacity 1.4s cubic-bezier(0.22, 1, 0.36, 1), transform 1.4s cubic-bezier(0.22, 1, 0.36, 1) !important;
+      will-change: opacity, transform;
+    }
+    .smart-fade.visible {
+      opacity: 1 !important;
+      transform: translateY(0) !important;
+    }
     
-    // RequestAnimationFrame ensures the browser paints before animating
-    requestAnimationFrame(() => {
-      setTimeout(() => {
-        heroBackground.style.transform = 'scale(1.05)';
-      }, 100);
-    });
-  }
+    /* Subtle Background Pan for Hero/Images */
+    .smart-bg-pan {
+      transition: background-position 20s ease-out !important;
+      background-position: top center !important;
+    }
+    .smart-bg-pan.pan-active {
+      background-position: bottom center !important;
+    }
 
-  // 2. Gentle Section Scroll Animations (Fade & Drift)
-  const observerOptions = {
-    root: null,
-    rootMargin: '0px',
-    threshold: 0.15 // Triggers when 15% of the section is visible
-  };
+    /* Initial load fade for the very top of the website */
+    @keyframes fadeInStart {
+      from { opacity: 0; filter: blur(2px); }
+      to { opacity: 1; filter: blur(0px); }
+    }
+  `;
+  document.head.appendChild(style);
 
-  const sectionObserver = new IntersectionObserver((entries, observer) => {
+  // 2. AUTO-TARGET SECTIONS
+  // This looks for standard structural tags used by almost all website builders
+  const sections = document.querySelectorAll('section, header, article, footer, .elementor-section, .et_pb_section, .wp-block-group');
+  
+  const observer = new IntersectionObserver((entries, obs) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
-        const el = entry.target;
-        
-        // Fluid, decelerating cubic-bezier for a premium, non-jarring entrance
-        el.style.transition = 'opacity 1.2s cubic-bezier(0.22, 1, 0.36, 1), transform 1.2s cubic-bezier(0.22, 1, 0.36, 1)';
-        el.style.opacity = '1';
-        el.style.transform = 'translateY(0)';
-        
-        // Stop observing after first animation so sections don't jump on scroll up
-        observer.unobserve(el);
+        entry.target.classList.add('visible');
+        // Stop observing after it appears so it doesn't flash again if the user scrolls up
+        obs.unobserve(entry.target); 
       }
     });
-  }, observerOptions);
+  }, { rootMargin: "0px", threshold: 0.1 });
 
-  // Target all sections you want to animate (e.g., class="animate-section")
-  const animatedSections = document.querySelectorAll('.animate-section');
-  
-  animatedSections.forEach(section => {
-    // Set initial resting state via JS so no CSS is required
-    section.style.opacity = '0';
-    section.style.transform = 'translateY(25px)'; // Very small drift distance
-    section.style.willChange = 'opacity, transform';
-    
-    sectionObserver.observe(section);
+  sections.forEach((section, index) => {
+    // 3. BACKGROUND IMAGE AUTO-DETECT
+    // If the section has a background image, apply the slow 20s pan effect
+    const bgImage = window.getComputedStyle(section).backgroundImage;
+    if (bgImage && bgImage !== "none") {
+      section.classList.add('smart-bg-pan');
+      // Trigger the pan shortly after the page loads
+      setTimeout(() => {
+        section.classList.add('pan-active');
+      }, 300);
+    }
+
+    // 4. SCROLL ANIMATION LOGIC
+    if (index === 0) {
+      // The very first section (Hero) shouldn't wait for a scroll. 
+      // We fade it in immediately with a soft, eye-caring blur-to-clear effect.
+      section.style.animation = "fadeInStart 2s cubic-bezier(0.22, 1, 0.36, 1) forwards";
+    } else {
+      // All other sections get the scroll-triggered drift
+      section.classList.add('smart-fade');
+      observer.observe(section);
+    }
   });
-
 });
-
-<script>
+</script>
 </body>
 </html>
