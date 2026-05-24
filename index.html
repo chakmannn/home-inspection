@@ -357,81 +357,65 @@
         }
     </script>
     
-    <script>
+<script>
+const initEyeCaringAnimations = () => {
+  // 1. Automatically grab all top-level layout blocks
+  const elements = document.querySelectorAll("body > *, main > *, #page > *, #content > *");
+  const validBlocks = Array.from(elements).filter(el => 
+    el.tagName !== "SCRIPT" && el.tagName !== "STYLE" && el.tagName !== "HEADER" && el.tagName !== "NAV" && el.offsetHeight > 50
+  );
 
-        window.addEventListener("load", () => {
-  // 1. DYNAMIC CSS INJECTION
-  // Creates the eye-caring animations automatically without needing a CSS file
-  const style = document.createElement('style');
-  style.innerHTML = `
-    /* Gentle Scroll Fade for Sections */
-    .smart-fade {
-      opacity: 0 !important;
-      transform: translateY(25px) !important;
-      transition: opacity 1.4s cubic-bezier(0.22, 1, 0.36, 1), transform 1.4s cubic-bezier(0.22, 1, 0.36, 1) !important;
-      will-change: opacity, transform;
-    }
-    .smart-fade.visible {
-      opacity: 1 !important;
-      transform: translateY(0) !important;
-    }
-    
-    /* Subtle Background Pan for Hero/Images */
-    .smart-bg-pan {
-      transition: background-position 20s ease-out !important;
-      background-position: top center !important;
-    }
-    .smart-bg-pan.pan-active {
-      background-position: bottom center !important;
-    }
-
-    /* Initial load fade for the very top of the website */
-    @keyframes fadeInStart {
-      from { opacity: 0; filter: blur(2px); }
-      to { opacity: 1; filter: blur(0px); }
-    }
-  `;
-  document.head.appendChild(style);
-
-  // 2. AUTO-TARGET SECTIONS
-  // This looks for standard structural tags used by almost all website builders
-  const sections = document.querySelectorAll('section, header, article, footer, .elementor-section, .et_pb_section, .wp-block-group');
-  
+  // 2. Setup the Scroll Observer
   const observer = new IntersectionObserver((entries, obs) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
-        entry.target.classList.add('visible');
-        // Stop observing after it appears so it doesn't flash again if the user scrolls up
-        obs.unobserve(entry.target); 
+        // Trigger the fluid entrance
+        entry.target.style.opacity = "1";
+        entry.target.style.transform = "translateY(0)";
+        obs.unobserve(entry.target);
       }
     });
-  }, { rootMargin: "0px", threshold: 0.1 });
+  }, { threshold: 0.1 });
 
-  sections.forEach((section, index) => {
-    // 3. BACKGROUND IMAGE AUTO-DETECT
-    // If the section has a background image, apply the slow 20s pan effect
-    const bgImage = window.getComputedStyle(section).backgroundImage;
-    if (bgImage && bgImage !== "none") {
-      section.classList.add('smart-bg-pan');
-      // Trigger the pan shortly after the page loads
-      setTimeout(() => {
-        section.classList.add('pan-active');
-      }, 300);
-    }
+  // 3. Apply Brute-Force Inline Styles to sections
+  validBlocks.forEach((block, index) => {
+    block.style.transition = "opacity 1.2s cubic-bezier(0.22, 1, 0.36, 1), transform 1.2s cubic-bezier(0.22, 1, 0.36, 1)";
+    block.style.willChange = "opacity, transform";
 
-    // 4. SCROLL ANIMATION LOGIC
     if (index === 0) {
-      // The very first section (Hero) shouldn't wait for a scroll. 
-      // We fade it in immediately with a soft, eye-caring blur-to-clear effect.
-      section.style.animation = "fadeInStart 2s cubic-bezier(0.22, 1, 0.36, 1) forwards";
+      // Hero section fades in automatically without waiting for scroll
+      block.style.opacity = "0";
+      setTimeout(() => { 
+        block.style.opacity = "1"; 
+        block.style.transform = "translateY(0)";
+      }, 150);
     } else {
-      // All other sections get the scroll-triggered drift
-      section.classList.add('smart-fade');
-      observer.observe(section);
+      // Scroll sections drift up
+      block.style.opacity = "0";
+      block.style.transform = "translateY(30px)";
+      observer.observe(block);
     }
   });
-});
-        
-<script>
+
+  // 4. Force Background Pan on anything with a background image
+  const allDivs = document.querySelectorAll("div, section");
+  allDivs.forEach(div => {
+    const bgImage = window.getComputedStyle(div).backgroundImage;
+    if (bgImage && bgImage !== "none" && !bgImage.includes("gradient")) {
+      div.style.transition = "background-position 20s ease-out";
+      div.style.backgroundPosition = "top center";
+      // Slight delay to trigger the pan after load
+      setTimeout(() => { div.style.backgroundPosition = "bottom center"; }, 500);
+    }
+  });
+};
+
+// Ensure it runs even if the page finishes loading before the script executes
+if (document.readyState === "complete" || document.readyState === "interactive") {
+  setTimeout(initEyeCaringAnimations, 100);
+} else {
+  window.addEventListener("load", initEyeCaringAnimations);
+}
+</script>
 </body>
 </html>
