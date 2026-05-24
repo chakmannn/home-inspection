@@ -356,91 +356,64 @@
             }
         }
     </script>
-    /**
- * Ultra-Smooth Professional Reveal & Hero Animation
- * Optimized to prevent "jumpy" first-loads and layout shifts.
- */
-
-(function() {
-  // 1. IMMEDIATE STYLE INJECTION
-  // We do this outside of any 'load' event so elements are hidden BEFORE they paint.
-  const style = document.createElement('style');
-  style.innerHTML = `
-    /* Prevent the 'flash' of visible content */
-    .js-reveal { 
-      opacity: 0; 
-      transform: translateY(20px); 
-      transition: opacity 1s cubic-bezier(0.22, 1, 0.36, 1), 
-                  transform 1s cubic-bezier(0.22, 1, 0.36, 1);
-      will-change: opacity, transform;
-    }
-    .js-reveal-active { 
-      opacity: 1 !important; 
-      transform: translateY(0) !important; 
-    }
-    .js-hero-bg { 
-      overflow: hidden;
-      will-change: transform;
-      transition: transform 2.5s cubic-bezier(0.16, 1, 0.3, 1);
-      transform: scale(1.1); /* Pre-zoom for smooth entry */
-    }
-    .js-hero-ready { 
-      transform: scale(1); 
-    }
-  `;
-  document.head.appendChild(style);
-
-  // 2. LOGIC INITIALIZATION
-  const initAnimations = () => {
+```javascript
+document.addEventListener("DOMContentLoaded", () => {
+  
+  // 1. Eye-Caring Hero Background Animation (Subtle Ken Burns Effect)
+  // Target your background image element (e.g., class="hero-bg")
+  const heroBackground = document.querySelector('.hero-bg');
+  
+  if (heroBackground) {
+    // Hardware acceleration and ultra-slow easing to prevent visual fatigue
+    heroBackground.style.willChange = 'transform';
+    heroBackground.style.transition = 'transform 18s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+    heroBackground.style.transform = 'scale(1)';
     
-    // Intersection Observer for Sections
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          // Add a tiny staggered delay for a more organic feel
-          setTimeout(() => {
-            entry.target.classList.add('js-reveal-active');
-          }, 50);
-          observer.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 0.1 });
-
-    // Target elements (Standard sections and specific classes)
-    const targets = document.querySelectorAll('section, .animate-reveal');
-    targets.forEach(el => {
-      el.classList.add('js-reveal');
-      observer.observe(el);
+    // RequestAnimationFrame ensures the browser paints before animating
+    requestAnimationFrame(() => {
+      setTimeout(() => {
+        heroBackground.style.transform = 'scale(1.05)';
+      }, 100);
     });
+  }
 
-    // 3. HERO BACKGROUND REFINEMENT
-    const hero = document.querySelector('.hero-background');
-    if (hero) {
-      hero.classList.add('js-hero-bg');
-      
-      // Ensure the image is loaded before starting the zoom-out
-      const startHeroAnim = () => {
-        requestAnimationFrame(() => {
-          setTimeout(() => hero.classList.add('js-hero-ready'), 150);
-        });
-      };
-
-      // If it's a background image, we wait for a slight delay; 
-      // if it's an <img>, we check completion.
-      if (hero.complete) {
-        startHeroAnim();
-      } else {
-        window.addEventListener('load', startHeroAnim);
-      }
-    }
+  // 2. Gentle Section Scroll Animations (Fade & Drift)
+  const observerOptions = {
+    root: null,
+    rootMargin: '0px',
+    threshold: 0.15 // Triggers when 15% of the section is visible
   };
 
-  // Run as soon as the DOM is interactive, but before full window load
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initAnimations);
-  } else {
-    initAnimations();
-  }
-})();
+  const sectionObserver = new IntersectionObserver((entries, observer) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const el = entry.target;
+        
+        // Fluid, decelerating cubic-bezier for a premium, non-jarring entrance
+        el.style.transition = 'opacity 1.2s cubic-bezier(0.22, 1, 0.36, 1), transform 1.2s cubic-bezier(0.22, 1, 0.36, 1)';
+        el.style.opacity = '1';
+        el.style.transform = 'translateY(0)';
+        
+        // Stop observing after first animation so sections don't jump on scroll up
+        observer.unobserve(el);
+      }
+    });
+  }, observerOptions);
+
+  // Target all sections you want to animate (e.g., class="animate-section")
+  const animatedSections = document.querySelectorAll('.animate-section');
+  
+  animatedSections.forEach(section => {
+    // Set initial resting state via JS so no CSS is required
+    section.style.opacity = '0';
+    section.style.transform = 'translateY(25px)'; // Very small drift distance
+    section.style.willChange = 'opacity, transform';
+    
+    sectionObserver.observe(section);
+  });
+
+});
+
+```
 </body>
 </html>
