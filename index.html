@@ -356,5 +356,91 @@
             }
         }
     </script>
+    /**
+ * Ultra-Smooth Professional Reveal & Hero Animation
+ * Optimized to prevent "jumpy" first-loads and layout shifts.
+ */
+
+(function() {
+  // 1. IMMEDIATE STYLE INJECTION
+  // We do this outside of any 'load' event so elements are hidden BEFORE they paint.
+  const style = document.createElement('style');
+  style.innerHTML = `
+    /* Prevent the 'flash' of visible content */
+    .js-reveal { 
+      opacity: 0; 
+      transform: translateY(20px); 
+      transition: opacity 1s cubic-bezier(0.22, 1, 0.36, 1), 
+                  transform 1s cubic-bezier(0.22, 1, 0.36, 1);
+      will-change: opacity, transform;
+    }
+    .js-reveal-active { 
+      opacity: 1 !important; 
+      transform: translateY(0) !important; 
+    }
+    .js-hero-bg { 
+      overflow: hidden;
+      will-change: transform;
+      transition: transform 2.5s cubic-bezier(0.16, 1, 0.3, 1);
+      transform: scale(1.1); /* Pre-zoom for smooth entry */
+    }
+    .js-hero-ready { 
+      transform: scale(1); 
+    }
+  `;
+  document.head.appendChild(style);
+
+  // 2. LOGIC INITIALIZATION
+  const initAnimations = () => {
+    
+    // Intersection Observer for Sections
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          // Add a tiny staggered delay for a more organic feel
+          setTimeout(() => {
+            entry.target.classList.add('js-reveal-active');
+          }, 50);
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1 });
+
+    // Target elements (Standard sections and specific classes)
+    const targets = document.querySelectorAll('section, .animate-reveal');
+    targets.forEach(el => {
+      el.classList.add('js-reveal');
+      observer.observe(el);
+    });
+
+    // 3. HERO BACKGROUND REFINEMENT
+    const hero = document.querySelector('.hero-background');
+    if (hero) {
+      hero.classList.add('js-hero-bg');
+      
+      // Ensure the image is loaded before starting the zoom-out
+      const startHeroAnim = () => {
+        requestAnimationFrame(() => {
+          setTimeout(() => hero.classList.add('js-hero-ready'), 150);
+        });
+      };
+
+      // If it's a background image, we wait for a slight delay; 
+      // if it's an <img>, we check completion.
+      if (hero.complete) {
+        startHeroAnim();
+      } else {
+        window.addEventListener('load', startHeroAnim);
+      }
+    }
+  };
+
+  // Run as soon as the DOM is interactive, but before full window load
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initAnimations);
+  } else {
+    initAnimations();
+  }
+})();
 </body>
 </html>
